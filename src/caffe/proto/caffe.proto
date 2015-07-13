@@ -351,6 +351,7 @@ message LayerParameter {
   optional TanHParameter tanh_param = 127;
   optional ThresholdParameter threshold_param = 128;
   optional WindowDataParameter window_data_param = 129;
+  optional BNParameter bn_param = 137;
 }
 
 // Message that stores parameters used to apply transformation
@@ -662,6 +663,11 @@ message MVNParameter {
 
   // Epsilon for not dividing by zero while normalizing variance
   optional float eps = 3 [default = 1e-9];
+}
+
+message BNParameter {
+  optional FillerParameter scale_filler = 1;
+  optional FillerParameter shift_filler = 2;
 }
 
 message PoolingParameter {

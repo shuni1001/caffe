@@ -69,7 +69,44 @@ class ArgMaxLayer : public Layer<Dtype> {
   bool out_max_val_;
   size_t top_k_;
 };
+// @brief Batch Normalization per-channel with scale & shift linear transform.
+template <typename Dtype>
+class BNLayer : public Layer<Dtype> {
+ public:
+  explicit BNLayer(const LayerParameter& param)
+      : Layer<Dtype>(param) {}
+  virtual void LayerSetUp(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top);
+  virtual void Reshape(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top);
 
+  virtual inline const char* type() const { return "BN"; }
+  virtual inline int ExactNumBottomBlobs() const { return 1; }
+  virtual inline int ExactNumTopBlobs() const { return 1; }
+
+ protected:
+  virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top);
+  virtual void Forward_gpu(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top);
+  /// @brief Not implemented (non-differentiable function)
+  virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  Blob<Dtype> spatial_mean_, spatial_variance_;
+  Blob<Dtype> batch_mean_, batch_variance_;
+  Blob<Dtype> buffer_blob_;
+  Blob<Dtype> x_norm_;
+
+  Blob<Dtype> spatial_sum_multiplier_, batch_sum_multiplier_;
+  int N_;
+  int C_;
+  int W_;
+  int H_;
+  Dtype var_eps_;
+  size_t top_k_;
+};
 /**
  * @brief Takes at least two Blob%s and concatenates them along either the num
  *        or channel dimension, outputting the result.

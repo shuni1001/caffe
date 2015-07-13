@@ -57,9 +57,31 @@ layer {
   }
 }
 layer {
+  name: "conv1_bn"
+  type: "BN"
+  bottom: "conv1"
+  top: "conv1_bn"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1"
+  bottom: "conv1_bn"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -91,9 +113,32 @@ layer {
   }
 }
 layer {
+  name: "conv2_bn"
+  type: "BN"
+  bottom: "conv2"
+  top: "conv2_bn"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 1
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
   name: "pool2"
   type: "Pooling"
-  bottom: "conv2"
+  bottom: "conv2_bn"
   top: "pool2"
   pooling_param {
     pool: MAX
